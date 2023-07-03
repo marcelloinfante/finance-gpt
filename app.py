@@ -1,20 +1,27 @@
 import os
 import ast
 import json
+import pandas as pd
 
 import openai
 import chainlit as cl
 
-from src.functions.index import functions
+from src.functions.index import Functions
 
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 MAX_ITER = 5
 
+@cl.on_chat_start
+def start_chat():
+    cl.user_session.set(
+        "message_history",
+        [{"role": "system", "content": "You are a helpful assistant."}],
+    )
+
 @cl.on_message
 async def run_conversation(user_message: str):
     message_history = cl.user_session.get("message_history")
-    print(cl.user_session)
     message_history.append({"role": "user", "content": user_message})
     
     cur_iter = 0
@@ -23,6 +30,8 @@ async def run_conversation(user_message: str):
         openai_message = {"role": "", "content": ""}
         function_ui_message = None
         content_ui_message = cl.Message(content="")
+        functions = Functions.list_functions()
+        
         async for stream_resp in await openai.ChatCompletion.acreate(
             model="gpt-3.5-turbo",
             messages=message_history,
@@ -50,12 +59,9 @@ async def run_conversation(user_message: str):
         function_name = openai_message.get("function_call").get("name")
         arguments = ast.literal_eval(
             openai_message.get("function_call").get("arguments"))
-
-        function_response = get_current_weather(
-            location=arguments.get("location"),
-            unit=arguments.get("unit"),
-        )
-
+        
+        function_response = Functions.execute(function_name, **arguments)
+        
         message_history.append(
             {
                 "role": "function",
@@ -97,15 +103,3 @@ async def process_new_delta(new_delta, openai_message, content_ui_message, funct
             openai_message["function_call"]["arguments"] += new_delta["function_call"]["arguments"]
             await function_ui_message.stream_token(new_delta["function_call"]["arguments"])
     return openai_message, content_ui_message, function_ui_message
-
-
-def get_current_weather(location, unit):
-    unit = unit or "Farenheit"
-    weather_info = {
-        "location": location,
-        "temperature": "60",
-        "unit": unit,
-        "forecast": ["windy"],
-    }
-
-    return json.dumps(weather_info)
