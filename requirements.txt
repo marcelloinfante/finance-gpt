@@ -1,0 +1,5 @@
+openai
+pandasai
+chainlit
+pytest
+python-dotenv
