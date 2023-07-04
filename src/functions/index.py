@@ -1,4 +1,5 @@
-from src.functions.enum import FunctionsEnum
+from src.functions.enums import FunctionsEnum
+
 
 class Functions:
     @classmethod
@@ -7,7 +8,7 @@ class Functions:
         function_response = function.run(**args)
 
         return function_response
-  
+
     @classmethod
     def list_functions(self):
         serialized_functions = []

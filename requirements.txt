@@ -2,3 +2,4 @@ openai
 pandasai
 chainlit
 pytest
+tabulate

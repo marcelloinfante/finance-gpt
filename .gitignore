@@ -2,3 +2,5 @@ venv/
 .env
 __pycache__/
 cache/
+
+exports/charts/*
