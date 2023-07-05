@@ -1,8 +1,6 @@
 import os
 import ast
 
-from tabulate import tabulate
-
 import openai
 import chainlit as cl
 
@@ -69,48 +67,20 @@ async def run_conversation(user_message: str):
 
         function_response = await Functions.execute(function_name, **arguments)
 
-        chart_path = function_response.get("chart_path")
-        if chart_path:
-            elements = [cl.Image(name="image1", display="inline", path=chart_path)]
+        message_history.append(
+            {
+                "role": "function",
+                "name": function_name,
+                "content": function_response,
+            }
+        )
 
-            await cl.Message(
-                content="Look at this local image!", elements=elements
-            ).send()
-            break
-
-        if function_response["is_dataframe"]:
-            await cl.Message(
-                indent=1,
-                language="json",
-                author=function_name,
-                content=str(function_response["content"]),
-            ).send()
-
-            await cl.Message(
-                language="json",
-                content=tabulate(
-                    function_response["content"],
-                    headers="keys",
-                    tablefmt="rounded_outline",
-                ),
-            ).send()
-
-            break
-        else:
-            message_history.append(
-                {
-                    "role": "function",
-                    "name": function_name,
-                    "content": function_response["content"],
-                }
-            )
-
-            await cl.Message(
-                author=function_name,
-                content=str(function_response["content"]),
-                language="json",
-                indent=1,
-            ).send()
+        await cl.Message(
+            author=function_name,
+            content=str(function_response["content"]),
+            language="json",
+            indent=1,
+        ).send()
 
         cur_iter += 1
 

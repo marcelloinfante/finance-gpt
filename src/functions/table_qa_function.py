@@ -56,11 +56,11 @@ class TableQAFunction:
                     },
                     "question": {
                         "type": "string",
-                        "description": "Question you want to ask to dataframe",
+                        "description": "Question you want to ask to dataframe.",
                     },
                     "new_table_name": {
                         "type": "string",
-                        "description": "Question you want to ask to dataframe",
+                        "description": "Return a unique name for new table.",
                     },
                 },
                 "required": ["tables", "question", "new_table_name"],

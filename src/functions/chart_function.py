@@ -1,7 +1,5 @@
 import os
-import json
 
-import pandas as pd
 from pandasai import PandasAI
 from pandasai.llm.openai import OpenAI
 
@@ -24,13 +22,11 @@ class ChartFunction:
 
         created_chart_path = self._get_latest_created_chart_path(charts_path)
 
-        response_content = {"success": True, "chart_name": chart_name}
+        await cl.Image(
+            path=created_chart_path, name=chart_name, display="inline"
+        ).send()
 
-        response = {
-            "content": json.dumps(response_content),
-            "is_dataframe": False,
-            "chart_path": created_chart_path,
-        }
+        response = f"Escreava para o usuário que o gráfico foi criado e mostre ele para o usuário escrevendo: '{chart_name}'."
 
         return response
 
