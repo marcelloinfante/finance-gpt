@@ -1,35 +1,41 @@
 import os
-import json
+
+import chainlit as cl
+from tabulate import tabulate
 
 import pandas as pd
 from pandasai import PandasAI
 from pandasai.llm.openai import OpenAI
 
-import chainlit as cl
-
 
 class TableQAFunction:
     @classmethod
-    def run(self, dataframes=[], question=""):
+    async def run(self, tables=[], question="", new_table_name=""):
         llm = OpenAI(api_token=os.environ.get("OPENAI_API_KEY"))
 
         pandas_ai = PandasAI(llm)
 
         dfs = []
-        for df in dataframes:
+        for df in tables:
             dfs.append(cl.user_session.get(df))
 
         response = pandas_ai(dfs, prompt=question)
 
         if isinstance(response, (pd.DataFrame, pd.Series)):
-            response = {"content": response, "is_dataframe": True}
-        else:
-            if hasattr(response, "tolist"):
-                response = response.tolist()
+            await cl.Text(
+                display="inline",
+                language="json",
+                name=f"{new_table_name}_show",
+                content=tabulate(
+                    response,
+                    headers="keys",
+                    tablefmt="rounded_outline",
+                ),
+            ).send()
 
-            response = json.dumps(response)
+            cl.user_session.set(new_table_name, response)
 
-            response = {"content": response, "is_dataframe": False}
+            response = f"Escreva para o usuário que a tabela foi criada e está salva em: '{new_table_name}'. Mostre a tabela escrevendo: '{new_table_name}_show.'"
 
         return response
 
