@@ -1,7 +1,7 @@
 import os
 import requests
 
-from src.functions.alpha_vantage.enums import SLUG_ENUM
+from src.utils.alpha_vantage.enums import SLUG_ENUM
 
 
 class AlphaVantageBase:

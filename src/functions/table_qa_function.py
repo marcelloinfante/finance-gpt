@@ -47,7 +47,7 @@ class TableQAFunction:
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "dataframes": {
+                    "tables": {
                         "type": "array",
                         "items": {
                             "type": "string",
@@ -58,8 +58,12 @@ class TableQAFunction:
                         "type": "string",
                         "description": "Question you want to ask to dataframe",
                     },
+                    "new_table_name": {
+                        "type": "string",
+                        "description": "Question you want to ask to dataframe",
+                    },
                 },
-                "required": ["dataframes", "question"],
+                "required": ["tables", "question", "new_table_name"],
             },
         }
 

@@ -67,7 +67,7 @@ async def run_conversation(user_message: str):
             openai_message.get("function_call").get("arguments")
         )
 
-        function_response = Functions.execute(function_name, **arguments)
+        function_response = await Functions.execute(function_name, **arguments)
 
         chart_path = function_response.get("chart_path")
         if chart_path:

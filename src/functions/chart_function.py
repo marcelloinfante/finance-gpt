@@ -10,7 +10,7 @@ import chainlit as cl
 
 class ChartFunction:
     @classmethod
-    def run(self, dataframes=[], description="", chart_name=""):
+    async def run(self, dataframes=[], description="", chart_name=""):
         llm = OpenAI(api_token=os.environ.get("OPENAI_API_KEY"))
 
         charts_path = os.getcwd()

@@ -1,35 +1,40 @@
-import json
-
 import pandas as pd
 
 import chainlit as cl
+from tabulate import tabulate
 
-from src.functions.alpha_vantage.base import AlphaVantageBase
+from src.utils.alpha_vantage.base import AlphaVantageBase
 
 
 class IntradayFunction:
     @classmethod
-    def run(self, symbol="", interval="", table_name=""):
-        params = {"symbol": symbol, "interval": interval}
-
-        response = AlphaVantageBase.run("intraday", **params)
+    async def run(self, symbol="", interval="", table_name=""):
+        api_response = AlphaVantageBase.run(
+            "intraday", symbol=symbol, interval=interval
+        )
 
         for time in ["1min", "5min", "15min", "30min", "60min"]:
-            time_series = response.get(f"Time Series ({time})")
+            time_series = api_response.get(f"Time Series ({time})")
 
             if time_series:
                 break
 
-        response_df = pd.DataFrame(time_series).transpose()
+        df = pd.DataFrame(time_series).transpose()
 
-        cl.user_session.set(table_name, response_df)
+        cl.user_session.set(table_name, df)
 
-        response = {
-            "content": json.dumps(
-                {"success": True, "table_name": table_name},
+        await cl.Text(
+            language="json",
+            name=f"{table_name}_show",
+            display="inline",
+            content=tabulate(
+                df.head(5),
+                headers="keys",
+                tablefmt="rounded_outline",
             ),
-            "is_dataframe": False,
-        }
+        ).send()
+
+        response = f"Escreva para o usuário que a tabela foi criada e está salva em: '{table_name}'. Mostre a tabela escrevendo: '{table_name}_show.'"
 
         return response
 

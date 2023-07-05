@@ -3,9 +3,9 @@ from src.functions.enums import FunctionsEnum
 
 class Functions:
     @classmethod
-    def execute(self, function_name, **args):
+    async def execute(self, function_name, **args):
         function = FunctionsEnum[function_name].value
-        function_response = function.run(**args)
+        function_response = await function.run(**args)
 
         return function_response
 
