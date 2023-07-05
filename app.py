@@ -76,10 +76,10 @@ async def run_conversation(user_message: str):
         )
 
         await cl.Message(
-            author=function_name,
-            content=str(function_response["content"]),
-            language="json",
             indent=1,
+            language="json",
+            author=function_name,
+            content=function_response,
         ).send()
 
         cur_iter += 1

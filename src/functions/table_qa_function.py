@@ -37,7 +37,7 @@ class TableQAFunction:
 
             response = f"Escreva para o usuário que a tabela foi criada e está salva em: '{new_table_name}'. Mostre a tabela escrevendo: '{new_table_name}_show.'"
 
-        return response
+        return str(response)
 
     @classmethod
     def get_infos(self):
