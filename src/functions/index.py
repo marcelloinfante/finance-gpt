@@ -1,4 +1,4 @@
-from src.functions.enums import FunctionsEnum
+from src.functions.enum import FunctionsEnum
 
 
 class Functions:

@@ -8,14 +8,19 @@ from src.functions.index import Functions
 
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
-MAX_ITER = 5
+MAX_ITER = 20
 
 
 @cl.on_chat_start
 def start_chat():
     cl.user_session.set(
         "message_history",
-        [{"role": "system", "content": "You are a helpful assistant."}],
+        [
+            {
+                "role": "system",
+                "content": "You are a helpful assistant. Only use the functions you have been provided with.",
+            }
+        ],
     )
 
 

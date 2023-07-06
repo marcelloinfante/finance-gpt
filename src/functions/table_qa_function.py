@@ -23,7 +23,7 @@ class TableQAFunction:
 
         if isinstance(response, (pd.DataFrame, pd.Series)):
             await cl.Text(
-                display="inline",
+                display="page",
                 language="json",
                 name=f"{new_table_name}_show",
                 content=tabulate(
@@ -51,12 +51,12 @@ class TableQAFunction:
                         "type": "array",
                         "items": {
                             "type": "string",
-                            "description": "Dataframe name.",
+                            "description": "Tables name.",
                         },
                     },
                     "question": {
                         "type": "string",
-                        "description": "Question you want to ask to dataframe.",
+                        "description": "Question you want to ask to table.",
                     },
                     "new_table_name": {
                         "type": "string",

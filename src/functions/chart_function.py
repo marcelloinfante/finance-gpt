@@ -18,7 +18,7 @@ class ChartFunction:
         for df in dataframes:
             dfs.append(cl.user_session.get(df))
 
-        pandas_ai(dfs, prompt=description)
+        await cl.make_async(pandas_ai)(dfs, prompt=description)
 
         created_chart_path = self._get_latest_created_chart_path(charts_path)
 

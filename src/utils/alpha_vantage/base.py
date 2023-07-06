@@ -1,12 +1,12 @@
 import os
 import requests
 
-from src.utils.alpha_vantage.enums import SLUG_ENUM
+from src.utils.alpha_vantage.enum import SLUG_ENUM
 
 
 class AlphaVantageBase:
     @classmethod
-    def run(self, slug, **params):
+    def run(self, slug="", **params):
         ALPHA_VANTAGE_BASE_URL = os.getenv("ALPHA_VANTAGE_BASE_URL")
         ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
 

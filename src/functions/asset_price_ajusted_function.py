@@ -5,21 +5,33 @@ from tabulate import tabulate
 
 from src.utils.alpha_vantage.base import AlphaVantageBase
 
+intervals_enum = {
+    "1min": "Time Series (1min)",
+    "5min": "Time Series (5min)",
+    "15min": "Time Series (15min)",
+    "30min": "Time Series (30min)",
+    "60min": "Time Series (60min)",
+    "daily": "Time Series (Daily)",
+    "weekly": "Weekly Adjusted Time Series",
+    "monthly": "Monthly Adjusted Time Series",
+}
 
-class IntradayFunction:
+
+class AssetPriceAjustedFunction:
     @classmethod
     async def run(self, symbol="", interval="", table_name=""):
-        api_response = AlphaVantageBase.run(
-            "intraday", symbol=symbol, interval=interval
-        )
+        params = {"symbol": symbol}
 
-        for time in ["1min", "5min", "15min", "30min", "60min"]:
-            time_series = api_response.get(f"Time Series ({time})")
+        if "min" in interval:
+            params.update({"slug": "intraday", "interval": interval, "adjusted": True})
+        else:
+            params.update({"slug": f"{interval}-adjusted"})
 
-            if time_series:
-                break
+        api_response = AlphaVantageBase.run(**params)
 
-        df = pd.DataFrame(time_series).transpose()
+        time_series_df = api_response.get(intervals_enum[interval])
+
+        df = pd.DataFrame(time_series_df).transpose()
 
         cl.user_session.set(table_name, df)
 
@@ -41,8 +53,8 @@ class IntradayFunction:
     @classmethod
     def get_infos(self):
         infos = {
-            "name": "intraday",
-            "description": "This API returns current and 20+ years of historical intraday OHLCV time series of the equity specified, covering extended trading hours where applicable (e.g., 4:00am to 8:00pm Eastern Time for the US market). You can query both raw (as-traded) and split/dividend-adjusted intraday data from this endpoint.",
+            "name": "asset_price",
+            "description": "This API returns raw (as-traded) open/high/low/close/volume values, adjusted close values, and historical split/dividend events of the global equity specified, covering 20+ years of historical data.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -52,7 +64,8 @@ class IntradayFunction:
                     },
                     "interval": {
                         "type": "string",
-                        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min",
+                        "enum": list(intervals_enum.keys()),
+                        "description": "Time interval between two consecutive data points in the time series.",
                     },
                     "table_name": {
                         "type": "string",
