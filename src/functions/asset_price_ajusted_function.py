@@ -46,7 +46,11 @@ class AssetPriceAjustedFunction:
             ),
         ).send()
 
-        response = f"Escreva para o usuário que a tabela foi criada e está salva em: '{table_name}'. Mostre a tabela escrevendo: '{table_name}_show.'"
+        response = (
+            f"Write to the user that the table has been created and saved in: '{table_name}'."
+            f"Show the table by writing: '{table_name}_show.'"
+            f"If the user asked for the only the time series then finish your action."
+        )
 
         return response
 

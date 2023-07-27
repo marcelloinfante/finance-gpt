@@ -1,4 +1,5 @@
 import os
+import time
 
 from pandasai import PandasAI
 from pandasai.llm.openai import OpenAI
@@ -19,6 +20,8 @@ class ChartFunction:
             dfs.append(cl.user_session.get(df))
 
         await cl.make_async(pandas_ai)(dfs, prompt=description)
+
+        time.sleep(5)
 
         created_chart_path = self._get_latest_created_chart_path(charts_path)
 
